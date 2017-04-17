@@ -1,0 +1,3 @@
+"0","#subset train and test sets by rule above eliminating NA columns"
+"0","smallerTrain <- smallTrain[,colSums(is.na(smallTrain)) == 0]"
+"0","smallerTest <- smallTest[,colSums(is.na(smallTest)) == 0]"

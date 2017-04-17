@@ -1,0 +1,2 @@
+"0","train <- read.csv('https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv')"
+"0","test <- read.csv('https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv')"

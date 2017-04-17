@@ -1,0 +1,3 @@
+"0","inTrain <- createDataPartition(train$classe, p=0.75, list = F)"
+"0","training <- train[inTrain,]"
+"0","testing <- train[-inTrain,]"

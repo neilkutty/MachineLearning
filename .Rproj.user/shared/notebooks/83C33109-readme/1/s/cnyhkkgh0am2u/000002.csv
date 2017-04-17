@@ -1,0 +1,6 @@
+"0","#Find near zero variance predictors"
+"0","nzvs <- nearZeroVar(training, saveMetrics = T)"
+"0","nzvars <- nzvs[nzvs$nzv==T,0]"
+"0","#Remove near zero variance predictors from train and test sets"
+"0","smallTrain <- training[,!colnames(training) %in% rownames(nzvars)]"
+"0","smallTest <- testing[,!colnames(testing) %in% rownames(nzvars)]"

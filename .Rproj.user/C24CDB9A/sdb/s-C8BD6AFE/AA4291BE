@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1489341546094.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "AA4291BE",
+    "lastKnownWriteTime" : 8,
+    "last_content_update" : 1489341546094,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "884935DE",
+        "caption" : "sTrain",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=sTrain&cache_key=884935DE",
+        "displayedObservations" : 14718,
+        "environment" : "",
+        "object" : "sTrain",
+        "preview" : 0,
+        "totalObservations" : 14718,
+        "variables" : 52
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

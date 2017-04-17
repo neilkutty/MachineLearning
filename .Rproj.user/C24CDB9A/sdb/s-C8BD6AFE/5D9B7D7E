@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1491925772868.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "5D9B7D7E",
+    "lastKnownWriteTime" : 4294967302,
+    "last_content_update" : 1491925772868,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "90C91A41",
+        "caption" : "forestCMdf",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=forestCMdf&cache_key=90C91A41",
+        "displayedObservations" : 5,
+        "environment" : "",
+        "object" : "forestCMdf",
+        "preview" : 0,
+        "totalObservations" : 5,
+        "variables" : 11
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

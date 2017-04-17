@@ -1,0 +1,163 @@
+---
+title: "Classification of Accelerometer Data with Machine Learning"
+author: "Neil Kutty"
+date: "2/16/2017"
+output: html_document
+---
+1. ##### Load Necessary Libraries
+
+```{r setup, include=T, warning=F, message=F, results='hide'}
+
+library(caret)
+library(GGally)
+library(rpart)
+library(rpart.plot)
+library(party)
+library(RGtk2)
+library(rattle)
+library(xgboost)
+library(formattable)
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(ggthemes)
+```
+
+2. ##### Download Data
+
+```{r downloadData, echo=T, cache=T}
+train <- read.csv('https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv')
+test <- read.csv('https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv')
+```
+
+3. ##### Create training / test partition for model validation
+
+```{r dataPartition, echo=T, eval=T}
+inTrain <- createDataPartition(train$classe, p=0.75, list = F)
+training <- train[inTrain,]
+testing <- train[-inTrain,]
+```
+
+4. ##### Identify and remove near zero variance predictors
+
+```{r nzvCleaning, echo=T, eval=T}
+#Find near zero variance predictors
+nzvs <- nearZeroVar(training, saveMetrics = T)
+nzvars <- nzvs[nzvs$nzv==T,0]
+
+#Remove near zero variance predictors from train and test sets
+smallTrain <- training[,!colnames(training) %in% rownames(nzvars)]
+smallTest <- testing[,!colnames(testing) %in% rownames(nzvars)]
+```
+
+
+5. ##### Find predictors with large amount of NA values
+
+```{r NAtabulate, echo=T, eval=T}
+x <- array()
+for(i in 1:ncol(smallTrain)){
+        x[i] <- sum(is.na(smallTrain[,i]))
+}
+print(x)
+table(x)
+```
+
+- The distribution of NA values across predictors with any NA value is skewed where every 
+column with any NA value has **`r percent(as.numeric(names(table(x))[2])/nrow(smallTrain))`** of 
+the total values missing, so we forego establishing a percentage NA threshold, and instead simply
+eliminate the predictors with any NA value at all.
+
+6. ##### Remove Predictors with NA values
+
+```{r NAremoval, echo=T, eval=T}
+#subset train and test sets by rule above eliminating NA columns
+smallerTrain <- smallTrain[,colSums(is.na(smallTrain)) == 0]
+smallerTest <- smallTest[,colSums(is.na(smallTest)) == 0]
+```
+
+7. ##### Final Data Cleaning Steps
+
+```{r Clean, echo=T, eval=T}
+#get rid of id number which is duplicate of row index
+
+sTrain <- smallerTrain[,-1]
+sTest <- smallerTest[,-1]
+```
+
+8. ##### Prediction with Decision Trees
+
+```{r Tree, echo=T, eval=T, cache=T}
+#--------------
+# Decision Tree
+#--------------
+set.seed(867)
+
+tree <- rpart(classe ~ ., data = sTrain, method = 'class')
+fancyRpartPlot(tree)
+printcp(tree, digits = 3)
+
+#Predict using tree
+TreeFit <- predict(tree, sTest, type = 'class')
+TreeResults <- confusionMatrix(TreeFit, testing$classe)
+
+#Tabulate results by class
+TreebyClass <- as.data.frame(TreeResults$byClass)
+plot(TreebyClass)
+
+#Tree Accuracy
+TreeResults$overall[1]
+```
+
+9. ##### Decision Tree Results
+```{r treeResults, echo=T, eval=T, cache=T}
+#Display confusion matrix results
+tcm <- as.data.frame(TreeResults$table)
+
+ggplot(tcm, aes(Prediction, Reference)) + geom_tile(aes(fill=Freq)) +
+    geom_text(aes(label=digits(Freq,0))) +
+    theme_hc()+
+    scale_fill_gradient(low = "white", high = "blue") +
+    ggtitle(label = paste("Decision Tree Accuracy:",round(TreeResults$overall['Accuracy'],4)),
+            subtitle = "Confusion Matrix Plot") +
+    theme(plot.title = element_text(hjust = 0.5, size = 12),
+          plot.subtitle = element_text(hjust = 0.5, size = 10))
+
+```
+
+
+
+10. ##### Prediction with Random Forests
+
+```{r Forest, echo=T, eval=T, cache=T}
+
+set.seed(867)
+
+forest <- train(classe ~ ., data = sTrain, method = 'rf')
+forestFit <- predict(forest, sTest)
+forestResults <- confusionMatrix(forestFit, testing$classe)
+forestResults$overall[1]
+
+
+```
+
+11. ##### Random Forest Results
+```{r forestResults, echo=T, eval=T}
+
+fcm <- as.data.frame(forestResults$table)
+ggplot(fcm, aes(Prediction, Reference)) + geom_tile(aes(fill=Freq)) +
+    geom_text(aes(label=digits(Freq,0))) +
+    theme_hc()+
+    scale_fill_gradient(low = "white", high = "green") +
+    ggtitle(label = paste("Random Forest Accuracy:",round(forestResults$overall['Accuracy'],4)),
+            subtitle = "Confusion Matrix Plot") +
+    theme(plot.title = element_text(hjust = 0.5, size = 12),
+          plot.subtitle = element_text(hjust = 0.5, size = 10))
+
+```
+
+The best fit comes from Random Forests with an accuracy of `r round(forestResults$overall['Accuracy'],4)`.  
+
+12. ##### Apply Random Forest model to test set
+```{r predictTest, echo=T, eval=T, message=F}
+predict(forest, testing)[5]
+```

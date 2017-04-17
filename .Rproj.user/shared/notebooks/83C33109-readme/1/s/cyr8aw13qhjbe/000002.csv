@@ -1,0 +1,6 @@
+"0","#--------------"
+"0","# Decision Tree"
+"0","#--------------"
+"0","set.seed(867)"
+"0","tree <- rpart(classe ~ ., data = sTrain, method = 'class')"
+"0","fancyRpartPlot(tree)"

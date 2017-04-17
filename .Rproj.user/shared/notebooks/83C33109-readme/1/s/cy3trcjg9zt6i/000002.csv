@@ -1,0 +1,3 @@
+"0","#get rid of id number which is duplicate of row index"
+"0","sTrain <- smallerTrain[,-1]"
+"0","sTest <- smallerTest[,-1]"
